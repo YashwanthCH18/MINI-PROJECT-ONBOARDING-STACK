@@ -1,0 +1,127 @@
+{
+  "info": {
+    "name": "Onboarding Profile Stack API",
+    "_postman_id": "onboarding-stack-api",
+    "description": "FastAPI microservice for managing user onboarding profiles and job settings",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8001/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8001",
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create/Update Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer test-user-123",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"John Doe\",\n  \"data_of_birth\": \"1995-05-15\",\n  \"secondary_email\": \"john.secondary@example.com\",\n  \"address\": \"123 Main St, Bangalore, Karnataka\",\n  \"linkedin_url\": \"https://linkedin.com/in/johndoe\",\n  \"github_username\": \"johndoe\",\n  \"skills\": \"Python, FastAPI, AWS, Docker, Kubernetes, PostgreSQL\",\n  \"career_preferences\": {\n    \"roles_targeted\": [\"Backend Developer\", \"DevOps Engineer\", \"Full Stack Developer\"],\n    \"min_target_lpa\": 12,\n    \"preferred_locations\": [\"Bangalore\", \"Hyderabad\", \"Remote\"]\n  },\n  \"education\": {\n    \"degree\": \"B.Tech\",\n    \"field\": \"Computer Science\",\n    \"institution\": \"XYZ University\",\n    \"year\": 2020\n  },\n  \"onboarding_completed\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8001/v1/onboarding",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8001",
+          "path": ["v1", "onboarding"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer test-user-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8001/v1/onboarding",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8001",
+          "path": ["v1", "onboarding"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create/Update Job Settings",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer test-user-123",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"search_active\": true,\n  \"auto_apply\": false,\n  \"portals\": [\"LinkedIn\", \"Naukri\", \"Indeed\"],\n  \"roles\": [\"Backend Developer\", \"Full Stack Developer\", \"DevOps Engineer\"],\n  \"locations\": [\"Bangalore\", \"Hyderabad\", \"Remote\"],\n  \"min_lpa\": 12,\n  \"company_types\": [\"Startup\", \"Product\", \"MNC\"]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8001/v1/settings/job",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8001",
+          "path": ["v1", "settings", "job"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Job Settings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer test-user-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8001/v1/settings/job",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8001",
+          "path": ["v1", "settings", "job"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
