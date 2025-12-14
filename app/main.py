@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import onboarding
+from mangum import Mangum
 
 # Create FastAPI application
 app = FastAPI(
@@ -40,3 +41,6 @@ async def root():
             "onboarding": "/v1/onboarding"
         }
     }
+
+# Lambda Handler
+handler = Mangum(app)

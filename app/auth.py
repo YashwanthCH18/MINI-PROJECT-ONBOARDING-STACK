@@ -47,7 +47,8 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> AuthU
         payload = jwt.decode(
             token,
             settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM]
+            algorithms=[settings.ALGORITHM],
+            audience="authenticated"
         )
         
         user_id: str = payload.get("sub")

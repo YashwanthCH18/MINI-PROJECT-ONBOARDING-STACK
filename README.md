@@ -93,12 +93,12 @@ Content-Type: application/json
 ```json
 {
   "full_name": "John Doe",
-  "data_of_birth": "1995-05-15",
+  "date_of_birth": "1995-05-15",
   "secondary_email": "john.secondary@example.com",
   "address": "123 Main St, Bangalore",
   "linkedin_url": "https://linkedin.com/in/johndoe",
   "github_username": "johndoe",
-  "skills": "Python, FastAPI, AWS, Docker",
+  "skills": ["Python", "FastAPI", "AWS", "Docker"],
   "career_preferences": {
     "roles_targeted": ["Backend Developer", "DevOps Engineer"],
     "min_target_lpa": 12,
@@ -119,7 +119,7 @@ Content-Type: application/json
 {
   "id": "test-user-123",
   "full_name": "John Doe",
-  "data_of_birth": "1995-05-15",
+  "date_of_birth": "1995-05-15",
   "secondary_email": "john.secondary@example.com",
   ...
   "created_at": "2025-11-25T17:15:00",
@@ -139,31 +139,7 @@ GET http://localhost:8001/v1/onboarding
 Authorization: Bearer test-user-123
 ```
 
-### Example: Update Job Settings
 
-**Request:**
-```
-PUT http://localhost:8001/v1/settings/job
-```
-
-**Headers:**
-```
-Authorization: Bearer test-user-123
-Content-Type: application/json
-```
-
-**Body:**
-```json
-{
-  "search_active": true,
-  "auto_apply": false,
-  "portals": ["LinkedIn", "Naukri", "Indeed"],
-  "roles": ["Backend Developer", "Full Stack Developer"],
-  "locations": ["Bangalore", "Hyderabad", "Remote"],
-  "min_lpa": 12,
-  "company_types": ["Startup", "Product"]
-}
-```
 
 ## Database Tables
 
@@ -185,15 +161,31 @@ Content-Type: application/json
 - `education` (jsonb)
 - `api_keys` (jsonb)
 
-## Production Deployment
+## Production Deployment (AWS SAM)
 
-For production:
+To deploy this application to AWS Lambda using SAM:
 
-1. Set `DEV_MODE=false` in `.env`
-2. Configure proper JWT secret from Supabase
-3. Update CORS origins to your frontend domain
-4. Deploy to AWS Lambda using SAM or similar
-5. Ensure Supabase service role key is stored securely
+1. **Install AWS SAM CLI** and configure AWS credentials.
+
+2. **Build the application**:
+   ```bash
+   sam build
+   ```
+
+3. **Deploy**:
+   ```bash
+   sam deploy --guided
+   ```
+   Follow the prompts. When asked about authorization, say "y" (allow unauthenticated access to the API Gateway - authentication is handled by the JWT middleware in the app).
+
+4. **Set Environment Variables**:
+   After deployment, go to the AWS Lambda Console -> Configuration -> Environment variables and add:
+   - `SUPABASE_URL`
+   - `SUPABASE_KEY`
+   - `SECRET_KEY`
+   - `DEV_MODE` (set to `false`)
+
+   Alternatively, you can pass these during deployment using `--parameter-overrides`.
 
 ## Troubleshooting
 

@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Onboarding Profile Stack Microservice
+  
+Parameters:
+  SupabaseUrl:
+    Type: String
+    Description: Supabase URL
+  SupabaseKey:
+    Type: String
+    Description: Supabase Service Role Key
+  SecretKey:
+    Type: String
+    Description: JWT Secret Key
+  
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: python3.12
+    Architectures:
+      - x86_64
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  OnboardingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.main.handler
+      Environment:
+        Variables:
+          SUPABASE_URL: !Ref SupabaseUrl
+          SUPABASE_KEY: !Ref SupabaseKey
+          SECRET_KEY: !Ref SecretKey
+          DEV_MODE: "false"
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
+
+Outputs:
+  OnboardingApi:
+    Description: "API Gateway endpoint URL for Prod stage for Onboarding function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
