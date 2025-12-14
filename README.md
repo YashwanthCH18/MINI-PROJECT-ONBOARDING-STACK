@@ -1,207 +1,54 @@
 # Onboarding Profile Stack
 
-FastAPI microservice for managing user onboarding profiles and job search settings.
+FastAPI microservice for managing user onboarding profiles.
+
+**Base URL:** `https://c3a24cwqti.execute-api.ap-south-1.amazonaws.com/Prod/`
+
+## 📚 Integration Guide
+For detailed API usage, request/response formats, and frontend integration flows, please see **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)**.
 
 ## Features
+- **User Profile Management**: Single endpoint for creating and updating profiles.
+- **Supabase Integration**: Direct secure connection to `profiles` table.
+- **JWT Authentication**: Validates Supabase Auth tokens (Access Tokens).
+- **Serverless**: Deployed on AWS Lambda via SAM.
 
-- User profile management (onboarding data including career preferences)
-- JWT authentication with Supabase
-- Development mode for easy testing
-- CORS-enabled for frontend integration
+## Setup & Development
 
-## Setup
-
-### 1. Create Virtual Environment
-
-```bash
-cd "d:\Projects\RESUME MINI PROJECT\ONBOARDING"
-python -m venv venv
-```
-
-### 2. Activate Virtual Environment
-
-**Windows PowerShell:**
-```bash
-.\venv\Scripts\Activate.ps1
-```
-
-**Windows CMD:**
-```bash
-.\venv\Scripts\activate.bat
-```
-
-### 3. Install Dependencies
-
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment
-
-The `.env` file is already configured with Supabase credentials. Make sure `DEV_MODE=true` is set for testing.
-
-## Running the Server
-
+### 2. Local Development
+To run locally, you must have a valid Supabase `.env` file.
 ```bash
 uvicorn app.main:app --reload --port 8001
 ```
 
-The server will start at: `http://localhost:8001`
+### 3. Deployment
+Deployed via AWS SAM (Serverless Application Model).
 
-## API Documentation
+```bash
+# Build
+sam build
 
-Once the server is running, visit:
-- Swagger UI: `http://localhost:8001/docs`
-- ReDoc: `http://localhost:8001/redoc`
-
-## Endpoints
-
-### Health Check
-- **GET** `/health` - Service health status
-
-### Onboarding Profile
-- **GET** `/v1/onboarding` - Get user's profile
-- **PUT** `/v1/onboarding` - Update/create profile (includes career preferences)
-
-## Testing with Postman
-
-### Authentication (Dev Mode)
-
-Since `DEV_MODE=true`, you can use a simple user ID as the token:
-
-**Header:**
+# Deploy (Interactive)
+sam deploy --guided
 ```
-Authorization: Bearer test-user-123
-```
-
-Replace `test-user-123` with any user ID. The service will create/update records for that user ID.
-
-### Example: Create/Update Profile
-
-**Request:**
-```
-PUT http://localhost:8001/v1/onboarding
-```
-
-**Headers:**
-```
-Authorization: Bearer test-user-123
-Content-Type: application/json
-```
-
-**Body:**
-```json
-{
-  "full_name": "John Doe",
-  "date_of_birth": "1995-05-15",
-  "secondary_email": "john.secondary@example.com",
-  "address": "123 Main St, Bangalore",
-  "linkedin_url": "https://linkedin.com/in/johndoe",
-  "github_username": "johndoe",
-  "skills": ["Python", "FastAPI", "AWS", "Docker"],
-  "career_preferences": {
-    "roles_targeted": ["Backend Developer", "DevOps Engineer"],
-    "min_target_lpa": 12,
-    "preferred_locations": ["Bangalore", "Remote"]
-  },
-  "education": {
-    "degree": "B.Tech",
-    "field": "Computer Science",
-    "institution": "XYZ University",
-    "year": 2020
-  },
-  "onboarding_completed": true
-}
-```
-
-**Response:**
-```json
-{
-  "id": "test-user-123",
-  "full_name": "John Doe",
-  "date_of_birth": "1995-05-15",
-  "secondary_email": "john.secondary@example.com",
-  ...
-  "created_at": "2025-11-25T17:15:00",
-  "updated_at": "2025-11-25T17:15:00"
-}
-```
-
-### Example: Get Profile
-
-**Request:**
-```
-GET http://localhost:8001/v1/onboarding
-```
-
-**Headers:**
-```
-Authorization: Bearer test-user-123
-```
-
-
+**Required Secrets during deployment:** `SupabaseUrl`, `SupabaseKey`, `SecretKey`.
 
 ## Database Tables
 
-### profiles
-- `id` (uuid, primary key) - User ID from Supabase Auth
-- `full_name` (text)
-- `date_of_birth` (date)
-- `secondary_email` (text)
-- `address` (text)
-- `linkedin_url` (text)
-- `github_username` (text)
-- `skills` (text[]) - Array of skills
-- `career_preferences` (jsonb) - Contains roles, min LPA, locations, etc.
-- `onboarding_completed` (boolean)
-- `created_at` (timestamptz)
-- `updated_at` (timestamptz)
-- `profile_photo_url` (text)
-- `govt_id_url` (text)
+### `profiles`
+- `id` (uuid, primary key) - Matches Supabase Auth User ID
+- `full_name`, `date_of_birth`, `address`...
+- `skills` (text[])
+- `career_preferences` (jsonb)
 - `education` (jsonb)
-- `api_keys` (jsonb)
-
-## Production Deployment (AWS SAM)
-
-To deploy this application to AWS Lambda using SAM:
-
-1. **Install AWS SAM CLI** and configure AWS credentials.
-
-2. **Build the application**:
-   ```bash
-   sam build
-   ```
-
-3. **Deploy**:
-   ```bash
-   sam deploy --guided
-   ```
-   Follow the prompts. When asked about authorization, say "y" (allow unauthenticated access to the API Gateway - authentication is handled by the JWT middleware in the app).
-
-4. **Set Environment Variables**:
-   After deployment, go to the AWS Lambda Console -> Configuration -> Environment variables and add:
-   - `SUPABASE_URL`
-   - `SUPABASE_KEY`
-   - `SECRET_KEY`
-   - `DEV_MODE` (set to `false`)
-
-   Alternatively, you can pass these during deployment using `--parameter-overrides`.
+- `onboarding_completed` (boolean)
 
 ## Troubleshooting
-
-### Virtual Environment Issues
-If you get execution policy errors on Windows:
-```bash
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-### Port Already in Use
-Change the port number:
-```bash
-uvicorn app.main:app --reload --port 8002
-```
-
-### Supabase Connection Issues
-- Verify `SUPABASE_URL` and `SUPABASE_KEY` in `.env`
-- Check if tables exist in Supabase dashboard
-- Ensure service role key has proper permissions
+- **401 Unauthorized**: Ensure your token is fresh and from Supabase (not a custom signed token).
+- **Invalid Audience**: Ensure the token has `"aud": "authenticated"`.
+- **500 Internal Server Error**: Check Lambda environment variables in AWS Console.
