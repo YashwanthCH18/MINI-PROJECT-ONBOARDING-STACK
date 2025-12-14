@@ -1,4 +1,7 @@
 # Python
+samconfig.toml
+INTEGRATION_GUIDE.md
+get_token.py
 __pycache__/
 *.py[cod]
 *$py.class
